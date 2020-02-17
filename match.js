@@ -2,19 +2,19 @@ const config = require("./config.json");
 
 const battlegrounds = require('battlegrounds')
 
-const api = new battlegrounds(config.api_key, config.platform + '-' + config.region)
+const api = new battlegrounds(config.api_key)
 
 const matchid = process.argv[2];
 
 const fs = require('fs');
 
-math = require("/usr/local/lib/node_modules/mathjs")
+math = require("mathjs")
 
 async function match(){
 	try {
 		const res = await api.getMatch({id:matchid});
 		
-		let final = "position,placement points,total kills, ,match points,  ,member 1,member 2,member 3,member 4, ,squad id \n";
+		let final = "rank,placement points,kills, ,total points, ,member 1,member 2,member 3,member 4, ,squad id \n";
 		
 		let squadcount = res.rosters.length;
 		var i=0;
@@ -75,8 +75,6 @@ async function match(){
 					break;
 			}
 			
-			
-			
 			let placementpoints;
 			switch (position){
 				case 1:
@@ -107,21 +105,51 @@ async function match(){
 					placementpoints = 0;
 					break;
 			}
-			let matchscore = math.add(totalkills, placementpoints);
+			
+			if (totalkills == undefined){
+				totalkills = 0;
+			}
+			if (placementpoints == 0){
+				placementpoints = 0;
+			}
+			
+			let matchscore;
+			
+			if(placementpoints !== 0 && totalkills !== 0){
+				matchscore = math.add(totalkills, placementpoints);
+			} else {
+				matchscore = 0;
+			}
 		
 			final = final + position + "," + placementpoints + "," + totalkills + ",," + matchscore + ",," + member1[1] + "," + member2[1] + "," + member3[1] + "," + member4[1] + ",," + squadid + "\n";
-			
-			
+
 			i++;
 		}
-		fs.writeFile("squad-" + matchid + ".csv", final, function (err) {
+		let outfile = "pubg_match_" + matchid + ".csv";
+		
+		if (fs.existsSync(outfile)){
+			fs.unlink(outfile, (err) => {
+				if (err){
+					console.error(err)
+					return
+				}
+			})
+		}
+		
+		const { exec } = require("child_process");
+		exec("touch " + outfile)
+		
+		fs.appendFile(outfile, final, function (err) {
 			if (err) throw err;
-			console.log('written to squad-' + matchid + '.csv');
+			console.log('written to ' + outfile);
 		});
+		
+		setTimeout(function(){console.log("")},2000)
 	} catch(err) {
 		console.log('error:')
-    	console.error(err)
-  }
+    	console.log(err)
+		setTimeout(function(){console.log("error")},2000)
+	}
 }
 
 match()
