@@ -1,6 +1,8 @@
 # pubg-node
 A PUBG Match Info Thing for Tournaments (made for RFLan)
 
+## all you need is node.js
+
 ### install thing.
 ```bash
 $ npm i battlegrounds mathjs
