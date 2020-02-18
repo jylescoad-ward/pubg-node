@@ -1,7 +1,7 @@
 # pubg-node
 A PUBG Match Info Thing for Tournaments (made for RFLan)
 
-## all you need is node.js
+## [all you need is node.js](https://nodejs.org/en/download/)
 
 ### install thing.
 ```bash
