@@ -7,19 +7,18 @@ const api = new battlegrounds(config.api_key)
 const matchid = process.argv[2];
 
 const fs = require('fs');
-
-math = require("mathjs")
+const math = require('mathjs');
 
 async function match(){
 	try {
 		const res = await api.getMatch({id:matchid});
-		
+
 		let final = "rank,placement points,kills, ,total points, ,member 1,member 2,member 3,member 4, ,squad id \n";
-		
+
 		let squadcount = res.rosters.length;
 		var i=0;
 		while (i < squadcount){
-			
+
 			let position = res.rosters[i].attributes.stats.rank;
 			let squadid = res.rosters[i].id;
 			let membercount = res.rosters[i].participants.length;
@@ -28,7 +27,7 @@ async function match(){
 			let member2 = [0, "", ""];
 			let member3 = [0, "", ""];
 			let member4 = [0, "", ""];
-			
+
 			let m=0;
 			while (m !== membercount){
 				switch (m){
@@ -55,7 +54,7 @@ async function match(){
 				}
 				m++;
 			}
-			
+
 			let totalkills;
 			switch (membercount){
 				case 0:
@@ -74,7 +73,7 @@ async function match(){
 					totalkills = math.add(member1[0],member2[0],member3[0],member4[0]);
 					break;
 			}
-			
+
 			let placementpoints;
 			switch (position){
 				case 1:
@@ -105,28 +104,28 @@ async function match(){
 					placementpoints = 0;
 					break;
 			}
-			
+
 			if (totalkills == undefined){
 				totalkills = 0;
 			}
 			if (placementpoints == 0){
 				placementpoints = 0;
 			}
-			
+
 			let matchscore;
-			
+
 			if(placementpoints !== 0 && totalkills !== 0){
 				matchscore = math.add(totalkills, placementpoints);
 			} else {
 				matchscore = 0;
 			}
-		
+
 			final = final + position + "," + placementpoints + "," + totalkills + ",," + matchscore + ",," + member1[1] + "," + member2[1] + "," + member3[1] + "," + member4[1] + ",," + squadid + "\n";
 
 			i++;
 		}
 		let outfile = "pubg_match_" + matchid + ".csv";
-		
+
 		if (fs.existsSync(outfile)){
 			fs.unlink(outfile, (err) => {
 				if (err){
@@ -135,15 +134,15 @@ async function match(){
 				}
 			})
 		}
-		
+
 		const { exec } = require("child_process");
 		exec("touch " + outfile)
-		
+
 		fs.appendFile(outfile, final, function (err) {
 			if (err) throw err;
 			console.log('written to ' + outfile);
 		});
-		
+
 		setTimeout(function(){console.log("")},2000)
 	} catch(err) {
 		console.log('error:')
