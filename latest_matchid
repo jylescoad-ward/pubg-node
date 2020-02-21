@@ -1,4 +1,0 @@
-#!/bin/bash
-args=("$@")
-node ./get_latest_match.js $args
-

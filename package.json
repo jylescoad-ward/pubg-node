@@ -1,11 +1,8 @@
 {
   "name": "pubg-node",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "description": "A CLI Tool for getting PUBG match data",
   "main": "main.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/jylescoad-ward/pubg-node.git"
@@ -15,5 +12,9 @@
   "bugs": {
     "url": "https://github.com/jylescoad-ward/pubg-node/issues"
   },
-  "homepage": "https://github.com/jylescoad-ward/pubg-node#readme"
+  "homepage": "https://github.com/jylescoad-ward/pubg-node#readme",
+  "dependencies": {
+    "battlegrounds": "^1.5.2",
+    "mathjs": "^6.6.0"
+  }
 }
