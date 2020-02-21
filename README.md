@@ -20,3 +20,8 @@ get match data (automatically exports to a .csv file in the same directory)
 $ ./tool -m [matchID]
 ```
 replace [matchID] with the matchID that you got from the previous command or any matchID that is valid.
+
+
+*fun fact!*
+if you are not using a *nix operating system then chill the heck out, just replace `./tool` with `node main.js`
+easy peasy! crysis diverted.
