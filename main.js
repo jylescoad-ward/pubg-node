@@ -1,29 +1,52 @@
 //Stuff that is required for things to work or it wont work.
-const config = require('./config.json');
 const battlegrounds = require('battlegrounds');
 const math = require('mathjs');
 const fs = require('fs');
-const api = new battlegrounds(config.api_key);
-const argv = process.argv;
 
 
-switch (argv[2]) {
-    case '-m' || '--get-latest-match':
-	  getlatestmatch();
-	  break;
-    case '-p' || '--get-player-info':
-	  getplayerinfo();
-	  break;
-    case '-lm' || '--get-latest-matchid-from-username':
-	  latestmatch();
-	  break;
-    case '-h' || '--help':
-	  help();
-	  break;
-    default:
-	  console.log("No Valid Arguments Recognised, Try 'npm start --help'");
-	  break;
+var config = "";
+var api = "";
+var argv = "";
+if (fs.existsSync("config.json")) {
+    config = require('./config.json');
+    api = new battlegrounds(config.api_key);
+    argv = process.argv;
+} else { console.error("config.json does not exist, please create it or redownload from github <3"); process.exit() }
+if (config.api_key === "not_set") {
+    setup();
+} else {
+    switch (argv[2]) {
+        case '-m':
+        case '--get-latest-match':
+            getlatestmatch();
+            break;
+        case '-p':
+        case '--get-player-info':
+            getplayerinfo();
+            break;
+        case '-lm':
+        case '--get-latest-matchid-from-username':
+            latestmatch();
+            break;
+        case '-c':
+        case '--cleanup':
+            cleanup();
+            break;
+        case '-s':
+        case '--setup':
+            setup();
+            break;
+        case '-h':
+        case '--help':
+            help();
+            break;
+        default:
+            console.log("No Valid Arguments Recognised, Try './tool --help' or 'node main.js --help'");
+            break;
+    }
 }
+
+
 
 
 function help() {
@@ -34,18 +57,106 @@ function help() {
     console.log(" | |  | | | |____  | |____  | |     ")
     console.log(" |_|  |_| |______| |______| |_|    ")
     console.log("\n")
-    console.log("### Get Player Info")
-    console.log("./tool -p [player]")
-    console.log("(replace [player] with a valid PUBG username)")
-    console.log()
-    console.log("### Get Latest MatchID from Username")
-    console.log("./tool -lm [player]")
-    console.log("(replace [player] with a valid PUBG username)")
-    console.log()
     console.log("### Export Match Data to .csv File")
     console.log("./tool -m [matchID]")
+    console.log("       --get-latest-match [matchID]")
     console.log("(replace [matchID] with a valid PUBG MatchID)")
+    console.log()
+    console.log("### Get Player Info")
+    console.log("./tool -p [username]")
+    console.log("       --get-player-info [username]")
+    console.log("(replace [username] with a valid PUBG username)")
+    console.log()
+    console.log("### Get Latest MatchID from Username")
+    console.log("./tool -lm [username]")
+    console.log("       --get-latest-matchid-from-username [username]")
+    console.log("(replace [username] with a valid PUBG username)")
+    console.log()
+    console.log("### .csv Cleanup")
+    console.log("./tool -c")
+    console.log("       --cleanup")
+    console.log()
+    console.log("### Setup")
+    console.log("./tool -s")
+    console.log("       --setup")
+    console.log()
+    console.log("### Help")
+    console.log("./tool -h")
+    console.log("       --help")
 
+}
+
+function cleanup() {
+    const readline = require("readline");
+    const rl = readline.createInterface({
+        input: process.stdin,
+        output: process.stdout
+    });
+
+    console.log("## WARNING ##")
+    console.log("This function will delete ALL match data in this directory")
+    rl.question("Are You sure? [y/N]", async function (option) {
+        switch (option) {
+            case 'y':
+            case 'Y':
+                console.log("Deleting ALL match data...");
+
+                let script = 'rm -v *.csv';
+
+                const util = require('util');
+                const exec = util.promisify(require('child_process').exec);
+                const { stdout, stderr } = await exec(script);
+
+                rl.close();
+                break;
+            default:
+            case 'n':
+            case 'N':
+                rl.on("close", function () {
+                    console.log("Aborting Process...");
+                    process.exit(0);
+                })
+
+                rl.close();
+                break;
+                
+        }
+    })
+}
+
+function setup() {
+
+    const readline = require("readline");
+    const rl = readline.createInterface({
+        input: process.stdin,
+        output: process.stdout
+    });
+
+    console.log("Welcome to the PUBG-Node Setup, All i'll be asking for is the PUBG API Key,")
+    console.log("A link to where you can find it is here; https://developer.pubg.com/")
+    console.log("Click on 'Get Your own API Key' and follow the instructions.")
+    console.log("\nOnce that is done please paste your key in here and press enter so\nI can validate it!")
+
+    rl.question("API Key: ", async function (key_given) {
+        const testapi = new battlegrounds(key_given);
+        try {
+            const res = await testapi.getPlayers({ names: ["xSuperSeed"] });
+        } catch (err) {
+            if (err.errors[0].title === "Unauthorized") {
+                console.log("Incorrect API Key, Aborting...")
+                rl.close();
+            }
+        }
+        console.log("\n\nCongratulations!\nYour API Key is valid so its going to be saved and \nit will *overwrite* the current API Key in config.json");
+
+        let outcontent = JSON.stringify({ "api_key": key_given });
+
+        fs.writeFile("config.json", outcontent, function (err) {
+            if (err) throw err;
+            console.log('saved api key');
+            rl.close();
+        });
+    });
 }
 
 
@@ -229,7 +340,7 @@ async function getplayerinfo() {
             });
         } catch (err) {
             console.log('error:')
-            console.error(err)
+            console.error(err.errors[0].title + err.errors[0].detail)
         }
     }
 
@@ -246,7 +357,7 @@ async function latestmatch() {
             console.log(res[0].matches[0].id);
         } catch (err) {
             console.log('error:')
-            console.error(err)
+            console.error(err.errors[0].title + err.errors[0].detail)
         }
     }
 }
