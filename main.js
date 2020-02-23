@@ -337,7 +337,7 @@ async function getplayerinfo() {
                 "name": res[0].id,
                 "id": res[0].attributes.name,
                 "latest_matchID": res[0].matches[0].id,
-                "matches": res[0].matches
+                "matches": JSON.stringify(res[0].matches)
             });
         } catch (err) {
             console.log('error:')
