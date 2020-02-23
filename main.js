@@ -95,7 +95,7 @@ function cleanup() {
 
     console.log("## WARNING ##")
     console.log("This function will delete ALL match data in this directory")
-    rl.question("Are You sure? [y/N]", async function (option) {
+    rl.question("Are You sure? [y/N] ", async function (option) {
         switch (option) {
             case 'y':
             case 'Y':
