@@ -1,3 +1,5 @@
+"use strict";
+
 //Stuff that is required for things to work or it wont work.
 const battlegrounds = require('battlegrounds');
 const math = require('mathjs');
@@ -17,8 +19,12 @@ if (config.api_key === "not_set") {
 } else {
     switch (argv[2]) {
         case '-m':
-        case '--get-latest-match':
-            getlatestmatch();
+        case '--export-match-data':
+            getmatchdata();
+            break;
+        case '-mu':
+        case '--latest-match-from-username':
+            getlatestmatchfromusername();
             break;
         case '-p':
         case '--get-player-info':
@@ -26,7 +32,7 @@ if (config.api_key === "not_set") {
             break;
         case '-lm':
         case '--get-latest-matchid-from-username':
-            latestmatch();
+            latestmatchidfromusername();
             break;
         case '-c':
         case '--cleanup':
@@ -48,44 +54,66 @@ if (config.api_key === "not_set") {
 
 
 
+//Time for the ACTual FUCKING FUNCTIONS!!!!!!!!!
 
-function help() {
-    console.log("  _    _   ______   _        _____ ")
-    console.log(" | |  | | |  ____| | |      |  __ \\ ")
-    console.log(" | |__| | | |__    | |      | |__) |")
-    console.log(" |  __  | |  __|   | |      |  ___/ ")
-    console.log(" | |  | | | |____  | |____  | |     ")
-    console.log(" |_|  |_| |______| |______| |_|    ")
-    console.log("\n")
-    console.log("### Export Match Data to .csv File")
-    console.log("./tool -m [matchID]")
-    console.log("       --get-latest-match [matchID]")
-    console.log("(replace [matchID] with a valid PUBG MatchID)")
-    console.log()
-    console.log("### Get Player Info")
-    console.log("./tool -p [username]")
-    console.log("       --get-player-info [username]")
-    console.log("(replace [username] with a valid PUBG username)")
-    console.log()
-    console.log("### Get Latest MatchID from Username")
-    console.log("./tool -lm [username]")
-    console.log("       --get-latest-matchid-from-username [username]")
-    console.log("(replace [username] with a valid PUBG username)")
-    console.log()
-    console.log("### .csv Cleanup")
-    console.log("./tool -c")
-    console.log("       --cleanup")
-    console.log()
-    console.log("### Setup")
-    console.log("./tool -s")
-    console.log("       --setup")
-    console.log()
-    console.log("### Help")
-    console.log("./tool -h")
-    console.log("       --help")
+    //Exports Match Data from PUBG MatchID Given in process.argv[3] (./tool -m        ./tool --export-match-data)
+//Get Latest Match Data and Export to a Comma Seperated Value File for Easier Reading!
+async function getmatchdata() {
+    if (argv.length !== 4) {
+        process.on('exit', function (code) {
+            return console.error("No Username Given or Too many arguments given.\n\nTry;\n./tool -m [PUBG MatchID]");
+        })
+    } else {
+        exportmatchdata(argv[3])
+    }
+}
+
+
+    //Exports Latest Match from Username Given in process.argv[3]
+async function getlatestmatchfromusername() {
+    if (argv.length !== 4) {
+        process.on('exit', function (code) {
+            return console.error("No Username Given or Too many arguments given.\n\nTry;\n./tool -mu [PUBG Username]");
+        })
+    } else {
+        try {
+            getudata(argv[3]).then(function (result) {
+                exportmatchdata(result.latest_matchID)
+            })
+        } catch (err) {
+            console.error(err)
+        }
+
+    }
+}
+
+    //Get All Player Info
+//Gives end user a bit of info about the player that they have mentioned, this includes; their ID, IGN, LatestMatchID, and an array of their recent Matches
+function getplayerinfo() {
+    if (argv.length !== 4) {
+        process.on('exit', function (code) {
+            return console.error("No MatchID Given or Too many arguments.\n\nTry;\n./tool -p [matchID]");
+        });
+    } else {
+        getudata(argv[3]).then(function (result) { console.log(result) });
+    }
 
 }
 
+
+    //Get Latest PUBG MatchID from PUBG Username
+function latestmatchidfromusername() {
+    if (argv.length !== 4) {
+        process.on('exit', function (code) {
+            return console.error("No MatchID Given or Too many arguments.\n\nTry;\n./tool -lm [matchID]");
+        });
+    } else {
+        getudata(argv[3]).then(function (result) { console.log(result.latest_matchID) })
+    }
+}
+
+
+    //.csv Cleanup, deletes all csv files in the current directory (./tool -c        ./tool --cleanup)
 function cleanup() {
     const readline = require("readline");
     const rl = readline.createInterface({
@@ -119,11 +147,13 @@ function cleanup() {
 
                 rl.close();
                 break;
-                
+
         }
     })
 }
 
+
+    //Setup (./tool -s        ./tool --setup       ./tool [if  api key is not set])
 function setup() {
 
     const readline = require("readline");
@@ -160,205 +190,223 @@ function setup() {
 }
 
 
-//Time for the ACTual FUCKING FUNCTIONS!!!!!!!!!
+    //Help Command (./tool -h     ./tool --help)
+function help() {
+    console.log("  _    _   ______   _        _____ ")
+    console.log(" | |  | | |  ____| | |      |  __ \\ ")
+    console.log(" | |__| | | |__    | |      | |__) |")
+    console.log(" |  __  | |  __|   | |      |  ___/ ")
+    console.log(" | |  | | | |____  | |____  | |     ")
+    console.log(" |_|  |_| |______| |______| |_|    ")
+    console.log("\n")
+    console.log("### Export Match Data to .csv File")
+    console.log("./tool -m [matchID]")
+    console.log("       --export-match-data [matchID]")
+    console.log("(replace [matchID] with a valid PUBG MatchID)")
+    console.log()
+    console.log("### Export Match Data from Username to .csv File")
+    console.log("./tool -mu [username]")
+    console.log("       --latest-match-from-username [username]")
+    console.log("(replace [matchID] with a valid PUBG MatchID)")
+    console.log()
+    console.log("### Get Player Info")
+    console.log("./tool -p [username]")
+    console.log("       --get-player-info [username]")
+    console.log("(replace [username] with a valid PUBG username)")
+    console.log()
+    console.log("### Get Latest MatchID from Username")
+    console.log("./tool -lm [username]")
+    console.log("       --get-latest-matchid-from-username [username]")
+    console.log("(replace [username] with a valid PUBG username)")
+    console.log()
+    console.log("### .csv Cleanup")
+    console.log("./tool -c")
+    console.log("       --cleanup")
+    console.log()
+    console.log("### Setup")
+    console.log("./tool -s")
+    console.log("       --setup")
+    console.log()
+    console.log("### Help")
+    console.log("./tool -h")
+    console.log("       --help")
 
-//Get Latest Match Data and Export to a Comma Seperated Value File for Easier Reading!
-async function getlatestmatch() {
-    if (argv.length !== 4) {
-
-    } else {
-		//Do the thing here!
-
-            //Warns the user that this program is much like Tasmania, Consent does not exist and is not recognised.
-        console.log("## WARNING ##\nThis will spit all data that will be written to a .CSV file in this directory\n--consent does not exist here--");
+}
 
 
-        try {
-            let matchid = argv[3];
-            const res = await api.getMatch({id:matchid});
 
-            let csvfinal = "Team Rank,Placement Points,Kills,,Total Points,,Member 1,Member 2,Member 3,Member 4,,Squad ID,,Member 1 kills,Member 2 kills,Member 3 kills,Member 4 kills,,Member 1 ID,Member 2 ID,Member 3 ID,Member 4 ID, \n";
-            //let htmlfilal = "<table><tr><th>Rank</th><th>Placement Points</th><th>Kills</th><th>Total Points</th><th>Member 1</th><th>Member 2</th><th>Member 3</th><th>Member 4</th><th>Team ID</th></tr>";
+//Big boy work
+async function getudata(uname_given) {
+    let final;
+    try {
+        const res = await api.getPlayers({ names: [uname_given] });
+        final = {
+            "name": res[0].id,
+            "id": res[0].attributes.name,
+            "latest_matchID": res[0].matches[0].id,
+            "matches": JSON.stringify(res[0].matches)
+        };
+    } catch (err) {
+        console.log('error:')
+        console.error(err.errors[0].title + err.errors[0].detail)
+        final = false;
+    }
+    return final;
+}
+async function exportmatchdata(id_given) {
+    //Do the thing here!
 
-            let squadcount = res.rosters.length;
-            var i=0;
-            while (i < squadcount){
+    //Warns the user that this program is much like Tasmania, Consent does not exist and is not recognised.
+    console.log("## WARNING ##\nThis will spit all data that will be written to a .CSV file in this directory\n--consent does not exist here--");
 
-                let position = res.rosters[i].attributes.stats.rank;
-                let squadid = res.rosters[i].id;
-                let membercount = res.rosters[i].participants.length;
-                //kills,name,id
-                let member1 = [0, "", ""];
-                let member2 = [0, "", ""];
-                let member3 = [0, "", ""];
-                let member4 = [0, "", ""];
 
-                let m=0;
-                while (m !== membercount){
-                    switch (m){
-                        case 0:
-                            member1[0] = res.rosters[i].participants[m].attributes.stats.kills;
-                            member1[1] = res.rosters[i].participants[m].attributes.stats.name;
-                            member1[2] = res.rosters[i].participants[m].id;
-                            break;
-                        case 1:
-                            member2[0] = res.rosters[i].participants[m].attributes.stats.kills;
-                            member2[1] = res.rosters[i].participants[m].attributes.stats.name;
-                            member2[2] = res.rosters[i].participants[m].id;
-                            break;
-                        case 2:
-                            member3[0] = res.rosters[i].participants[m].attributes.stats.kills;
-                            member3[1] = res.rosters[i].participants[m].attributes.stats.name;
-                            member3[2] = res.rosters[i].participants[m].id;
-                            break;
-                        case 3:
-                            member4[0] = res.rosters[i].participants[m].attributes.stats.kills;
-                            member4[1] = res.rosters[i].participants[m].attributes.stats.name;
-                            member4[2] = res.rosters[i].participants[m].id;
-                            break;
-                    }
-                    m++;
-                }
+    try {
+        let matchid = id_given;
+        const res = await api.getMatch({ id: matchid });
 
-                let totalkills;
-                switch (membercount){
+        let csvfinal = "Team Rank,Placement Points,Kills,,Total Points,,Member 1,Member 2,Member 3,Member 4,,Squad ID,,Member 1 kills,Member 2 kills,Member 3 kills,Member 4 kills,,Member 1 ID,Member 2 ID,Member 3 ID,Member 4 ID, \n";
+        //let htmlfilal = "<table><tr><th>Rank</th><th>Placement Points</th><th>Kills</th><th>Total Points</th><th>Member 1</th><th>Member 2</th><th>Member 3</th><th>Member 4</th><th>Team ID</th></tr>";
+
+        let squadcount = res.rosters.length;
+        var i = 0;
+        while (i < squadcount) {
+
+            let position = res.rosters[i].attributes.stats.rank;
+            let squadid = res.rosters[i].id;
+            let membercount = res.rosters[i].participants.length;
+            //kills,name,id
+            let member1 = [0, "", ""];
+            let member2 = [0, "", ""];
+            let member3 = [0, "", ""];
+            let member4 = [0, "", ""];
+
+            let m = 0;
+            while (m !== membercount) {
+                switch (m) {
                     case 0:
-                        totalkills = member1[0];
+                        member1[0] = res.rosters[i].participants[m].attributes.stats.kills;
+                        member1[1] = res.rosters[i].participants[m].attributes.stats.name;
+                        member1[2] = res.rosters[i].participants[m].id;
                         break;
                     case 1:
-                        totalkills = math.add(member1[0],member2[0]);
+                        member2[0] = res.rosters[i].participants[m].attributes.stats.kills;
+                        member2[1] = res.rosters[i].participants[m].attributes.stats.name;
+                        member2[2] = res.rosters[i].participants[m].id;
                         break;
                     case 2:
-                        totalkills = math.add(member1[0],member2[0],member3[0]);
+                        member3[0] = res.rosters[i].participants[m].attributes.stats.kills;
+                        member3[1] = res.rosters[i].participants[m].attributes.stats.name;
+                        member3[2] = res.rosters[i].participants[m].id;
                         break;
                     case 3:
-                        totalkills = math.add(member1[0],member2[0],member3[0],member4[0]);
-                        break;
-                    case 5:
-                        totalkills = math.add(member1[0],member2[0],member3[0],member4[0]);
+                        member4[0] = res.rosters[i].participants[m].attributes.stats.kills;
+                        member4[1] = res.rosters[i].participants[m].attributes.stats.name;
+                        member4[2] = res.rosters[i].participants[m].id;
                         break;
                 }
+                m++;
+            }
 
-                let placementpoints;
-                switch (position){
-                    case 1:
-                        placementpoints = 10;
-                        break;
-                    case 2:
-                        placementpoints = 6;
-                        break;
-                    case 3:
-                        placementpoints = 5;
-                        break;
-                    case 4:
-                        placementpoints = 4;
-                        break;
-                    case 5:
-                        placementpoints = 3;
-                        break;
-                    case 6:
-                        placementpoints = 2;
-                        break;
-                    case 7:
-                        placementpoints = 1;
-                        break;
-                    case 8:
-                        placementpoints = 1;
-                        break;
-                    default:
-                        placementpoints = 0;
-                        break;
-                }
+            let totalkills;
+            switch (membercount) {
+                case 0:
+                    totalkills = member1[0];
+                    break;
+                case 1:
+                    totalkills = math.add(member1[0], member2[0]);
+                    break;
+                case 2:
+                    totalkills = math.add(member1[0], member2[0], member3[0]);
+                    break;
+                case 3:
+                    totalkills = math.add(member1[0], member2[0], member3[0], member4[0]);
+                    break;
+                case 5:
+                    totalkills = math.add(member1[0], member2[0], member3[0], member4[0]);
+                    break;
+            }
 
-                if (totalkills == undefined){
-                    totalkills = 0;
-                }
-                if (placementpoints == 0){
+            let placementpoints;
+            switch (position) {
+                case 1:
+                    placementpoints = 10;
+                    break;
+                case 2:
+                    placementpoints = 6;
+                    break;
+                case 3:
+                    placementpoints = 5;
+                    break;
+                case 4:
+                    placementpoints = 4;
+                    break;
+                case 5:
+                    placementpoints = 3;
+                    break;
+                case 6:
+                    placementpoints = 2;
+                    break;
+                case 7:
+                    placementpoints = 1;
+                    break;
+                case 8:
+                    placementpoints = 1;
+                    break;
+                default:
                     placementpoints = 0;
+                    break;
+            }
+
+            if (totalkills == undefined) {
+                totalkills = 0;
+            }
+            if (placementpoints == 0) {
+                placementpoints = 0;
+            }
+
+            let matchscore;
+
+            //if(placementpoints !== 0 && totalkills !== 0){
+            matchscore = math.add(totalkills, placementpoints);
+            //} else {
+            //    matchscore = 0;
+            //}
+
+            let csvcombine = position + "," + placementpoints + "," + totalkills + ",," + matchscore + ",," + member1[1] + "," + member2[1] + "," + member3[1] + "," + member4[1] + ",," + squadid + ",," + member1[0] + "," + member2[0] + "," + member3[0] + "," + member4[0] + ",," + member1[2] + "," + member2[2] + "," + member3[2] + "," + member4[2] + "\n";
+            //let htmlcombine = "<tr><td>" + position + "</td><td>" + placementpoints + "</td><td>" + totalkills + "</td><td>" + matchscore + "</td><td>" + member1[1] + "<sup>" + member1[0] + " kills</sup><td>" + + "</td><td>" + member2[1] + "<sup>" + member2[0] + " kills</sup><td>" + + "</td><td>" + member3[1] + "<sup>" + member3[0] + " kills</sup><td>" + + "</td><td>" + member4[1] + "<sup>" + member4[0] + " kills</sup><td>" + squadid + "</td></tr>";
+
+            csvfinal = csvfinal + csvcombine;
+            //htmlfinal = htmlfinal + htmlcombine;
+            i++;
+        }
+
+        let datecombinestring = new Date(Date.parse(res.attributes.createdAt)).toLocaleDateString("en-AU") + " " + new Date(Date.parse(res.attributes.createdAt)).toLocaleTimeString("en-AU")
+
+        let csvendthing = "\n\n\nMatch Start Date and Time,Match Duration\n" + datecombinestring + "," + new Date(res.attributes.duration * 1000).toISOString().substr(11, 8);
+        csvfinal = csvfinal + csvendthing;
+
+        let outfile = "pubg_match_" + matchid + ".csv";
+
+        if (fs.existsSync(outfile)) {
+            fs.unlink(outfile, (err) => {
+                if (err) {
+                    console.error(err)
+                    return;
                 }
+            })
+        }
 
-                let matchscore;
+        const { exec } = require("child_process");
+        exec("touch " + outfile)
 
-                //if(placementpoints !== 0 && totalkills !== 0){
-                    matchscore = math.add(totalkills, placementpoints);
-                //} else {
-                //    matchscore = 0;
-                //}
-
-                let csvcombine = position + "," + placementpoints + "," + totalkills + ",," + matchscore + ",," + member1[1] + "," + member2[1] + "," + member3[1] + "," + member4[1] + ",," + squadid + ",,"+member1[0]+","+member2[0]+","+member3[0]+","+member4[0]+",,"+member1[2]+","+member2[2]+","+member3[2]+","+member4[2]+"\n";
-                //let htmlcombine = "<tr><td>" + position + "</td><td>" + placementpoints + "</td><td>" + totalkills + "</td><td>" + matchscore + "</td><td>" + member1[1] + "<sup>" + member1[0] + " kills</sup><td>" + + "</td><td>" + member2[1] + "<sup>" + member2[0] + " kills</sup><td>" + + "</td><td>" + member3[1] + "<sup>" + member3[0] + " kills</sup><td>" + + "</td><td>" + member4[1] + "<sup>" + member4[0] + " kills</sup><td>" + squadid + "</td></tr>";
-
-                csvfinal = csvfinal + csvcombine;
-                //htmlfinal = htmlfinal + htmlcombine;
-                i++;
-            }
-
-            let csvendthing = "\n\n\nMatch Start Date and Time,Match Duration\n" + res.attributes.createdAt + "," + new Date(res.attributes.duration * 1000).toISOString().substr(11, 8);
-            csvfinal = csvfinal + csvendthing;
-
-            let outfile = "pubg_match_" + matchid + ".csv";
-
-            if (fs.existsSync(outfile)){
-                fs.unlink(outfile, (err) => {
-                    if (err){
-                        console.error(err)
-                        return;
-                    }
-                })
-            }
-
-            const { exec } = require("child_process");
-            exec("touch " + outfile)
-
-            fs.appendFile(outfile, csvfinal, function (err) {
+        fs.appendFile(outfile, csvfinal, function (err) {
             if (err) throw err;
-                setTimeout(function () { console.log('\nwritten to ' + outfile)}, 2000)
-            });
-
-        } catch(err) {
-            console.log('error:')
-            console.log(err)
-            setTimeout(function(){console.log("error")},2000)
-        }
-    }
-}
-
-
-//Gives end user a bit of info about the player that they have mentioned, this includes; their ID, IGN, LatestMatchID, and an array of their recent Matches
-async function getplayerinfo() {
-    if (argv.length !== 4) {
-        process.on('exit', function (code) {
-            return console.error("No MatchID Given or Too many arguments.\n\nTry;\nnpm start -m [matchID]");
+            setTimeout(function () { console.log('\nwritten to ' + outfile) }, 2000)
         });
-    } else {
-        try {
-            const res = await api.getPlayers({ names: [argv[3]] });
-            console.log({
-                "name": res[0].id,
-                "id": res[0].attributes.name,
-                "latest_matchID": res[0].matches[0].id,
-                "matches": JSON.stringify(res[0].matches)
-            });
-        } catch (err) {
-            console.log('error:')
-            console.error(err.errors[0].title + err.errors[0].detail)
-        }
-    }
 
-}
-
-async function latestmatch() {
-    if (argv.length !== 4) {
-        process.on('exit', function (code) {
-            return console.error("No MatchID Given or Too many arguments.\n\nTry;\nnpm start -m [matchID]");
-        });
-    } else {
-        try {
-            const res = await api.getPlayers({ names: [argv[3]] });
-            console.log(res[0].matches[0].id);
-        } catch (err) {
-            console.log('error:')
-            console.error(err.errors[0].title + err.errors[0].detail)
-        }
+    } catch (err) {
+        console.log('error:')
+        console.log(err)
+        setTimeout(function () { console.log("error") }, 2000)
     }
 }
