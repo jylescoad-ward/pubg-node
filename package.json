@@ -15,6 +15,6 @@
   "homepage": "https://github.com/jylescoad-ward/pubg-node",
   "dependencies": {
     "battlegrounds": "^1.5.2",
-    "datejs": "^1.0.0-rc3"
+    "mathjs": "^6.6.0"
   }
 }
