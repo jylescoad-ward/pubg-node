@@ -1,0 +1,15 @@
+table{
+	border: 1px black solid;
+	min-width: 3000px;
+}
+tr{
+	border: 1px black solid;
+}
+td{
+	border: 1px black solid;
+	max-height: 30px;
+}
+th{
+	border: 2px black solid;
+	font-weight:bold;
+}
