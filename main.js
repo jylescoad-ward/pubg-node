@@ -263,8 +263,8 @@ async function exportmatchdata(id_given) {
     try {
         let matchid = id_given;
         const res = await api.getMatch({ id: matchid });
-
-        let csvfinal = "Team Rank,Placement Points,Kills,,Total Points,,Member 1,Member 2,Member 3,Member 4,,Squad ID,,Member 1 kills,Member 2 kills,Member 3 kills,Member 4 kills,,Member 1 ID,Member 2 ID,Member 3 ID,Member 4 ID, \n";
+        var json_array = [];
+        json_array[0] = "Team Rank,Placement Points,Kills,,Total Points,,Member 1,Member 2,Member 3,Member 4,,Squad ID,,Member 1 kills,Member 2 kills,Member 3 kills,Member 4 kills,,Member 1 ID,Member 2 ID,Member 3 ID,Member 4 ID";
         //let htmlfilal = "<table><tr><th>Rank</th><th>Placement Points</th><th>Kills</th><th>Total Points</th><th>Member 1</th><th>Member 2</th><th>Member 3</th><th>Member 4</th><th>Team ID</th></tr>";
 
         let squadcount = res.rosters.length;
@@ -364,21 +364,11 @@ async function exportmatchdata(id_given) {
                 placementpoints = 0;
             }
 
-            let matchscore;
+            json_array[position] = "\n" + position + "," + placementpoints + "," + totalkills + ",," + math.add(totalkills, placementpoints) + ",," + member1[1] + "," + member2[1] + "," + member3[1] + "," + member4[1] + ",," + squadid + ",," + member1[0] + "," + member2[0] + "," + member3[0] + "," + member4[0] + ",," + member1[2] + "," + member2[2] + "," + member3[2] + "," + member4[2];
 
-            //if(placementpoints !== 0 && totalkills !== 0){
-            matchscore = math.add(totalkills, placementpoints);
-            //} else {
-            //    matchscore = 0;
-            //}
-
-            let csvcombine = position + "," + placementpoints + "," + totalkills + ",," + matchscore + ",," + member1[1] + "," + member2[1] + "," + member3[1] + "," + member4[1] + ",," + squadid + ",," + member1[0] + "," + member2[0] + "," + member3[0] + "," + member4[0] + ",," + member1[2] + "," + member2[2] + "," + member3[2] + "," + member4[2] + "\n";
-            //let htmlcombine = "<tr><td>" + position + "</td><td>" + placementpoints + "</td><td>" + totalkills + "</td><td>" + matchscore + "</td><td>" + member1[1] + "<sup>" + member1[0] + " kills</sup><td>" + + "</td><td>" + member2[1] + "<sup>" + member2[0] + " kills</sup><td>" + + "</td><td>" + member3[1] + "<sup>" + member3[0] + " kills</sup><td>" + + "</td><td>" + member4[1] + "<sup>" + member4[0] + " kills</sup><td>" + squadid + "</td></tr>";
-
-            csvfinal = csvfinal + csvcombine;
-            //htmlfinal = htmlfinal + htmlcombine;
             i++;
         }
+        let csvfinal = json_array.join();
 
         let datecombinestring = new Date(Date.parse(res.attributes.createdAt)).toLocaleDateString("en-AU") + " " + new Date(Date.parse(res.attributes.createdAt)).toLocaleTimeString("en-AU")
 
