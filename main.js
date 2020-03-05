@@ -108,48 +108,47 @@ async function exportashtml() {
 			return console.error("No MatchID Given or Too many arguments given.\n\nTry;\n./tool -mu [PUBG Username]");
 		});
 	} else {
+		console.log("## WARNING ##\nThis will spit all data that will be written to a .html file in this directory\n--consent does not exist here--");
+		let matchid = argv[3].split("\r");
+		matchid = matchid[0];
+		console.log(matchid)
 		try {
-			exportmatchdata(argv[3]).then(function (result) {
-				console.log(result)
-				let final = result;
-				let head = `
-<!DOCTYPE html>
-<html>
-	<head>
-		<link href="html/style.css" rel="stylesheet" type="text/css" />
-	</head>
-	<body>` + final[final.length].split(",").join("<br>") + `
-		<table>
-				`;
-				let end = `
-		</table>
-	</body>
-</html>`;
-					let tablehead = result[0];
-					tablehead = '<tr class="head"><th>' + tablehead.split(",").join("</th><th>") + "</th></tr>";
-					let table = head + tablehead;
-					final[0] = "";
-					let i=1;
-					while(i < final.length) {
-						console.log(final[i])
-						if (final[i] !== undefined) {
-							table = table + "<tr><td>" + final[i].split(",").join("</td><td>") + "</td></tr>"
+				exportmatchdata(matchid).then(function (result) {
+					let final = result;
+					let head = `
+	<!DOCTYPE html>
+	<html>
+		<head>
+			<link href="html/style.css" type="text/css" rel="stylesheet" />
+		</head>
+		<body>
+			<table>
+					`;
+					let end = `
+			</table>
+		</body>
+	</html>`;
+						let tablehead = result[0];
+						tablehead = '<tr class="head"><th>' + tablehead.split(",").join("</th><th>") + "</th></tr></div>";
+						let table = head + tablehead;
+						final[0] = "";
+						let i=1;
+						while(i < final.length) {
+							if (final[i] !== undefined) {
+								table = table + "<tr><td>" + final[i].split(",").join("</td><td>") + "</td></tr>"
+							}
+							i++
 						}
-						if (final[i] == final.length){
-							table = table;
-						}
-						i++
-					}
-				table = table + end;
+					table = table + end;
 
-				//replace thing here
-				let outfile = "pubg_match_" + argv[3] + ".html";
+					//replace thing here
+					let outfile = "pubg_match_" + matchid + ".html";
 
-				writefile(outfile, table);
-			})
-		} catch (err){
-			console.error(err)
-		}
+					writefile(outfile, table);
+				})
+			} catch (err){
+				console.error(err)
+			}
 	}
 
 }
