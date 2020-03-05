@@ -107,3 +107,5 @@ dist
 .vs/
 .idea/
 *.csv
+*.html
+config.json
