@@ -182,7 +182,7 @@ async function exportashtmlfromuname() {
 		</body>
 	</html>`;
 						let tablehead = result[0];
-						tablehead = "<tr><th>" + tablehead.split(",").join("</th><th>") + "</th></tr>";
+						tablehead = '<tr class="head"><th>' + tablehead.split(",").join("</th><th>") + "</th></tr></div>";
 						let table = head + tablehead;
 						final[0] = "";
 						let i=1;
@@ -236,9 +236,9 @@ function latestmatchidfromusername() {
 //.csv Cleanup, deletes all csv files in the current directory (./tool -c        ./tool --cleanup)
 function cleanup() {
 	const readline = require("readline");
-		const rl = readline.createInterface({
-			input: process.stdin,
-			output: process.stdout
+	const rl = readline.createInterface({
+		input: process.stdin,
+		output: process.stdout
 	});
 
 	console.log("## WARNING ##")
@@ -311,76 +311,75 @@ function setup() {
 
 //Help Command (./tool -h     ./tool --help)
 function help() {
-console.log("  _    _   ______   _        _____ ")
-console.log(" | |  | | |  ____| | |      |  __ \\ ")
-console.log(" | |__| | | |__    | |      | |__) |")
-console.log(" |  __  | |  __|   | |      |  ___/ ")
-console.log(" | |  | | | |____  | |____  | |     ")
-console.log(" |_|  |_| |______| |______| |_|    ")
-console.log("\n")
-console.log("### Export Match Data to .csv File")
-console.log("./tool -m [matchID]")
-console.log("       --export-match-data [matchID]")
-console.log("(replace [matchID] with a valid PUBG MatchID)")
-console.log()
-console.log("### Export Match Data from Username to .csv File")
-console.log("./tool -mu [username]")
-console.log("       --latest-match-from-username [username]")
-console.log("(replace [username] with a valid PUBG MatchID)")
-console.log()
-console.log("### Export MatchID as HTML Table")
-console.log("./tool -mhtml [matchID]")
-console.log("       --match-export-to-html [matchID]")
-console.log("(replace [matchID] with a valid PUBG MatchID)")
-console.log()
-console.log("### Export MatchID as HTML Table")
-console.log("./tool -muhtml [username]")
-console.log("       --match-export-to-html-from-username [username]")
-console.log("(replace [username] with a valid PUBG MatchID)")
-console.log()
-console.log("### Get Player Info")
-console.log("./tool -p [username]")
-console.log("       --get-player-info [username]")
-console.log("(replace [username] with a valid PUBG username)")
-console.log()
-console.log("### Get Latest MatchID from Username")
-console.log("./tool -lm [username]")
-console.log("       --get-latest-matchid-from-username [username]")
-console.log("(replace [username] with a valid PUBG username)")
-console.log()
-console.log("### .csv Cleanup")
-console.log("./tool -c")
-console.log("       --cleanup")
-console.log()
-console.log("### Setup")
-console.log("./tool -s")
-console.log("       --setup")
-console.log()
-console.log("### Help")
-console.log("./tool -h")
-console.log("       --help")
-
+	console.log("  _    _   ______   _        _____ ")
+	console.log(" | |  | | |  ____| | |      |  __ \\ ")
+	console.log(" | |__| | | |__    | |      | |__) |")
+	console.log(" |  __  | |  __|   | |      |  ___/ ")
+	console.log(" | |  | | | |____  | |____  | |     ")
+	console.log(" |_|  |_| |______| |______| |_|    ")
+	console.log("\n")
+	console.log("### Export Match Data to .csv File")
+	console.log("./tool -m [matchID]")
+	console.log("       --export-match-data [matchID]")
+	console.log("(replace [matchID] with a valid PUBG MatchID)")
+	console.log()
+	console.log("### Export Match Data from Username to .csv File")
+	console.log("./tool -mu [username]")
+	console.log("       --latest-match-from-username [username]")
+	console.log("(replace [username] with a valid PUBG MatchID)")
+	console.log()
+	console.log("### Export MatchID as HTML Table")
+	console.log("./tool -mhtml [matchID]")
+	console.log("       --match-export-to-html [matchID]")
+	console.log("(replace [matchID] with a valid PUBG MatchID)")
+	console.log()
+	console.log("### Export MatchID as HTML Table")
+	console.log("./tool -muhtml [username]")
+	console.log("       --match-export-to-html-from-username [username]")
+	console.log("(replace [username] with a valid PUBG MatchID)")
+	console.log()
+	console.log("### Get Player Info")
+	console.log("./tool -p [username]")
+	console.log("       --get-player-info [username]")
+	console.log("(replace [username] with a valid PUBG username)")
+	console.log()
+	console.log("### Get Latest MatchID from Username")
+	console.log("./tool -lm [username]")
+	console.log("       --get-latest-matchid-from-username [username]")
+	console.log("(replace [username] with a valid PUBG username)")
+	console.log()
+	console.log("### .csv Cleanup")
+	console.log("./tool -c")
+	console.log("       --cleanup")
+	console.log()
+	console.log("### Setup")
+	console.log("./tool -s")
+	console.log("       --setup")
+	console.log()
+	console.log("### Help")
+	console.log("./tool -h")
+	console.log("       --help")
 }
 
 
 
 //Big boy work
 async function getudata(uname_given) {
-let final;
-try {
-const res = await api.getPlayers({ names: [uname_given] });
-final = {
-"name": res[0].id,
-"id": res[0].attributes.name,
-"latest_matchID": res[0].matches[0].id,
-"matches": JSON.stringify(res[0].matches)
-};
-} catch (err) {
-console.log('error:')
-console.error(err.errors[0].title + err.errors[0].detail)
-final = false;
-}
-return final;
+	let final;
+	try {
+		const res = await api.getPlayers({ names: [uname_given] });
+		final = {
+			"name": res[0].id,
+			"id": res[0].attributes.name,
+			"latest_matchID": res[0].matches[0].id,
+			"matches": JSON.stringify(res[0].matches)
+		};
+	} catch (err) {
+		console.log('error:')
+		console.error(err.errors[0].title + err.errors[0].detail)
+		final = false;
+	}
+	return final;
 }
 async function exportmatchdata(id_given) {
 	//Do the thing here!
@@ -499,7 +498,8 @@ async function exportmatchdata(id_given) {
 		let datecombinestring = new Date(Date.parse(res.attributes.createdAt)).toLocaleDateString("en-AU") + " " + new Date(Date.parse(res.attributes.createdAt)).toLocaleTimeString("en-AU")
 
 		//csvfinal = csvfinal + csvendthing;
-		json_array[json_array.length] = "\n\n\nMatch Start Date and Time:" + datecombinestring + "\nMatch Duration: " + new Date(res.attributes.duration * 1000).toISOString().substr(11, 8)
+		json_array[json_array.length] = "\n\n\nMatch Start," + datecombinestring;
+		json_array[json_array.length + 1] = "\nMatch Duration," + new Date(res.attributes.duration * 1000).toISOString().substr(11, 8)
 		return json_array;
 
 	} catch (err) {
@@ -509,21 +509,24 @@ async function exportmatchdata(id_given) {
 	}
 }
 async function writefile(filename, content) {
+	if (fs.existsSync(filename)) {
+		fs.unlink(filename, (err) => {
+			if (err) {
+				console.error(err)
+				return;
+			}
+		})
+	}
 
-if (fs.existsSync(filename)) {
-fs.unlink(filename, (err) => {
-if (err) {
-console.error(err)
-return;
-}
-})
+	const { exec } = require("child_process");
+	exec("touch " + filename)
+
+	fs.appendFile(filename, content, function (err) {
+		if (err) throw err;
+		setTimeout(function () { console.log('\nwritten to ' + filename) }, 2000)
+	});
 }
 
-const { exec } = require("child_process");
-exec("touch " + filename)
 
-fs.appendFile(filename, content, function (err) {
-if (err) throw err;
-setTimeout(function () { console.log('\nwritten to ' + filename) }, 2000)
-});
-}
+
+
