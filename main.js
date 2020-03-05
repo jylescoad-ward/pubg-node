@@ -116,25 +116,9 @@ async function exportashtml() {
 <!DOCTYPE html>
 <html>
 	<head>
-		<style>
-table{
-	border: 1px black solid;
-	min-width: 3000px;
-}
-tr{
-	border: 1px black solid;
-}
-td{
-	border: 1px black solid;
-	max-height: 30px;
-}
-th{
-	border: 2px black solid;
-	font-weight:bold;
-}
-		</style>
+		<link href="html/style.css" rel="stylesheet" type="text/css" />
 	</head>
-	<body>
+	<body>` + final[final.length].split(",").join("<br>") + `
 		<table>
 				`;
 				let end = `
@@ -142,7 +126,7 @@ th{
 	</body>
 </html>`;
 					let tablehead = result[0];
-					tablehead = "<tr><th>" + tablehead.split(",").join("</th><th>") + "</th></tr>";
+					tablehead = '<tr class="head"><th>' + tablehead.split(",").join("</th><th>") + "</th></tr>";
 					let table = head + tablehead;
 					final[0] = "";
 					let i=1;
@@ -150,6 +134,9 @@ th{
 						console.log(final[i])
 						if (final[i] !== undefined) {
 							table = table + "<tr><td>" + final[i].split(",").join("</td><td>") + "</td></tr>"
+						}
+						if (final[i] == final.length){
+							table = table;
 						}
 						i++
 					}
@@ -397,15 +384,14 @@ return final;
 }
 async function exportmatchdata(id_given) {
 	//Do the thing here!
-
-	//Warns the user that this program is much like Tasmania, Consent does not exist and is not recognised.
+	//Warns the user that this program is much like Tasmania, Consent does not exist and is not recognised. (handled by the command function, this is just a base.)
 
 
 	try {
 		let matchid = id_given;
 		const res = await api.getMatch({ id: matchid });
 		var json_array = [];
-		json_array[0] = "Team Rank,Placement Points,Kills,,Total Points,,Member 1,Member 2,Member 3,Member 4,,Squad ID,,Member 1 kills,Member 2 kills,Member 3 kills,Member 4 kills,,Member 1 ID,Member 2 ID,Member 3 ID,Member 4 ID";
+		json_array[0] = "Rank,Placement Points,Kills,,Total Points,,Member 1,Member 2,Member 3,Member 4,,Squad ID,,Member 1 kills,Member 2 kills,Member 3 kills,Member 4 kills,,Member 1 ID,Member 2 ID,Member 3 ID,Member 4 ID";
 		//let htmlfilal = "<table><tr><th>Rank</th><th>Placement Points</th><th>Kills</th><th>Total Points</th><th>Member 1</th><th>Member 2</th><th>Member 3</th><th>Member 4</th><th>Team ID</th></tr>";
 
 		let squadcount = res.rosters.length;
@@ -512,9 +498,8 @@ async function exportmatchdata(id_given) {
 
 		let datecombinestring = new Date(Date.parse(res.attributes.createdAt)).toLocaleDateString("en-AU") + " " + new Date(Date.parse(res.attributes.createdAt)).toLocaleTimeString("en-AU")
 
-		let csvendthing = "\n\n\nMatch Start Date and Time,Match Duration\n" + datecombinestring + "," + new Date(res.attributes.duration * 1000).toISOString().substr(11, 8);
 		//csvfinal = csvfinal + csvendthing;
-
+		json_array[json_array.length] = "\n\n\nMatch Start Date and Time:" + datecombinestring + "\nMatch Duration: " + new Date(res.attributes.duration * 1000).toISOString().substr(11, 8)
 		return json_array;
 
 	} catch (err) {
