@@ -11,10 +11,11 @@ if (fs.existsSync("config.json")) {
 	api = new battlegrounds(config.api_key);
 	argv = process.argv;
 } else { console.error("config.json does not exist, please create it or redownload from github <3"); process.exit() }
+
 if (config.api_key === "not_set") {
 	setup();
 } else {
-	switch (argv[2]) {
+	switch (argv[2].split("\r").join("")) {
 		case '-m':
 		case '--export-match-data':
 			getmatchdata();
