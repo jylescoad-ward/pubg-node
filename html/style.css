@@ -12,6 +12,8 @@ table{
 	font-family: sans-serif;
 }
 th{
+	background-color:#aaa;
+	color: black;
 }
 td{
 	border-bottom:1px solid white;
