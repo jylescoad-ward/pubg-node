@@ -1,6 +1,5 @@
 const math = require('mathjs');
 const battlegrounds = require('battlegrounds');
-const fs = require('fs');
 var argv = process.argv;
 
 //Time for the ACTual FUCKING FUNCTIONS!!!!!!!!!
