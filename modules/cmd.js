@@ -210,13 +210,13 @@ var help = function() {
 }
 
 module.exports = {
-  help: help,
+  help: help(),
   prog_setup: prog_setup(),
-  latestmatchidfromusername: latestmatchidfromusername,
-  getplayerinfo: getplayerinfo,
-  cleanup: cleanup,
-  exportashtmlfromuname: exportashtmlfromuname,
-  exportashtml:exportashtml,
-  getlatestmatchfromusername:getlatestmatchfromusername,
-  getmatchdata:getmatchdata
+  latestmatchidfromusername: latestmatchidfromusername(),
+  getplayerinfo: getplayerinfo(),
+  cleanup: cleanup(),
+  exportashtmlfromuname: exportashtmlfromuname(),
+  exportashtml: exportashtml(),
+  getlatestmatchfromusername: getlatestmatchfromusername(),
+  getmatchdata: getmatchdata()
 }

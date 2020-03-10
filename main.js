@@ -1,4 +1,5 @@
 "use strict";
+console.log(process.argv)
 
 //Stuff that is required for things to work or it wont work.
 const battlegrounds = require('battlegrounds');
@@ -10,5 +11,5 @@ if (fs.existsSync("config.json")) {
 	config = require('./config.json');
 	api = new battlegrounds(config.api_key);
 	argv = process.argv;
-	require('./modules/misc.js').startPUBGNode(config, argv);
+	require('./modules/misc.js').startPUBGNode(config);
 } else { console.error("config.json does not exist, please create it or redownload from github <3"); process.exit() }
