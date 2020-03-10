@@ -1,7 +1,7 @@
 const battlegrounds = require('battlegrounds');
 const math = require('mathjs');
-config = require('./../config.json');
-api = new battlegrounds(config.api_key);
+var config = require('./../config.json');
+var api = new battlegrounds(config.api_key);
 
 module.exports.raw = async function(id_given) {
   try {

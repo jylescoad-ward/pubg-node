@@ -1,5 +1,4 @@
 "use strict";
-console.log(process.argv)
 
 //Stuff that is required for things to work or it wont work.
 const battlegrounds = require('battlegrounds');

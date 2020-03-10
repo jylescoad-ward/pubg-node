@@ -12,7 +12,7 @@ var getmatchdata = function() {
 			return console.error("No Username Given or Too many arguments given.\n\nTry;\n./tool -m [PUBG MatchID]");
 		})
 	} else {
-		require('.//export.js').csv(argv[3]);
+		require('./export.js').csv(argv[3]);
 	}
 }
 
@@ -24,8 +24,8 @@ var getlatestmatchfromusername = async function() {
 			return console.error("No Username Given or Too many arguments given.\n\nTry;\n./tool -mu [PUBG Username]");
 		})
 	} else {
-		require('.//user.js').raw(argv[3]).then(async function (result_) {
-			require('.//export.js').csv(result_.latest_matchID);
+		require('./user.js').raw(argv[3]).then(async function (result_) {
+			require('./export.js').csv(result_.latest_matchID);
 		})
 	}
 }
@@ -37,7 +37,7 @@ var exportashtml = function() {
 			return console.error("No Username Given or Too many arguments given.\n\nTry;\n./tool -mhtl [PUBG MatchID]");
 		})
 	} else {
-		require('.//export.js').html(argv[3]);
+		require('./export.js').html(argv[3]);
 	}
 }
 
@@ -48,8 +48,9 @@ var exportashtmlfromuname = async function() {
 			return console.error("No Username Given or Too many arguments given.\n\nTry;\n./tool -muhtml [PUBG Username]");
 		});
 	} else {
-		require('.//user.js').raw(argv[3]).then(async function (result_) {
-			require('.//export.js').html(result_.latest_matchID);
+		console.log(argv[3])
+		require('./modules/user.js').raw(argv[3]).then(async function (result_) {
+			require('./export.js').html(result_.latest_matchID);
 		})
 	}
 
@@ -63,7 +64,7 @@ var getplayerinfo = function() {
 			return console.error("No MatchID Given or Too many arguments.\n\nTry;\n./tool -p [matchID]");
 		});
 	} else {
-		require('.//user.js').raw(argv[3]).then(function (result) { console.log(result) });
+		require('./user.js').raw(argv[3]).then(function (result) { console.log(result) });
 	}
 
 }
@@ -76,7 +77,7 @@ var latestmatchidfromusername = function() {
 			return console.error("No MatchID Given or Too many arguments.\n\nTry;\n./tool -lm [matchID]");
 		});
 	} else {
-		require('.//user.js').raw(argv[3]).then(function (result) { console.log(result.latest_matchID) })
+		require('./user.js').raw(argv[3]).then(function (result) { console.log(result.latest_matchID) })
 	}
 }
 
@@ -121,7 +122,7 @@ var cleanup = function() {
 
 
 //Setup (./tool -s        ./tool --setup       ./tool [if  api key is not set])
-var  prog_setup = function(){
+var  prog_setup = async function(){
 
 	const readline = require("readline");
 	const rl = readline.createInterface({
@@ -210,13 +211,13 @@ var help = function() {
 }
 
 module.exports = {
-  help: help(),
-  prog_setup: prog_setup(),
-  latestmatchidfromusername: latestmatchidfromusername(),
-  getplayerinfo: getplayerinfo(),
-  cleanup: cleanup(),
-  exportashtmlfromuname: exportashtmlfromuname(),
-  exportashtml: exportashtml(),
-  getlatestmatchfromusername: getlatestmatchfromusername(),
-  getmatchdata: getmatchdata()
+  help: help,
+  prog_setup: prog_setup,
+  latestmatchidfromusername: latestmatchidfromusername,
+  getplayerinfo: getplayerinfo,
+  cleanup: cleanup,
+  exportashtmlfromuname: exportashtmlfromuname,
+  exportashtml: exportashtml,
+  getlatestmatchfromusername: getlatestmatchfromusername,
+  getmatchdata: getmatchdata
 }

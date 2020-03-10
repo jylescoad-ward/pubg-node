@@ -25,10 +25,7 @@ module.exports.startPUBGNode = function(config) {
 	const argv = process.argv;
 	if (config.api_key === "not_set") {
 		require('./cmd.js').prog_setup();
-		process.exit();
 	} else {
-		console.log(argv[2].split("\r").join(""))
-		console.log(argv)
 		switch (argv[2].split("\r").join("")) {
 			case '-m':
 			case '--export-match-data':
@@ -60,7 +57,7 @@ module.exports.startPUBGNode = function(config) {
 				break;
 			case '-s':
 			case '--setup':
-				require('./cmd.js').setup();
+				require('./cmd.js').prog_setup();
 				break;
 			case '-h':
 			case '--help':

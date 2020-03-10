@@ -1,6 +1,6 @@
 const battlegrounds = require('battlegrounds');
-config = require('./../config.json');
-api = new battlegrounds(config.api_key);
+var config = require('./../config.json');
+var api = new battlegrounds(config.api_key);
 
   //CSV Export
 module.exports.csv = async function(matchID){
