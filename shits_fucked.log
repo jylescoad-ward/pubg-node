@@ -1,0 +1,20 @@
+Welcome to the PUBG-Node Setup, All i'll be asking for is the PUBG API Key,
+A link to where you can find it is here; https://developer.pubg.com/
+Click on 'Get Your own API Key' and follow the instructions.
+
+Once that is done please paste your key in here and press enter so
+I can validate it!
+API Key:
+/Users/jyles.coad-ward/projects/pubg-node/modules/misc.js:26
+		require('./cmd.js').prog_setup();
+		                    ^
+
+TypeError: require(...).prog_setup is not a function
+    at Object.module.exports.startPUBGNode (/Users/jyles.coad-ward/projects/pubg-node/modules/misc.js:26:23)
+    at Object.<anonymous> (/Users/jyles.coad-ward/projects/pubg-node/main.js:13:31)
+    at Module._compile (internal/modules/cjs/loader.js:1158:30)
+    at Object.Module._extensions..js (internal/modules/cjs/loader.js:1178:10)
+    at Module.load (internal/modules/cjs/loader.js:1002:32)
+    at Function.Module._load (internal/modules/cjs/loader.js:901:14)
+    at Function.executeUserEntryPoint [as runMain] (internal/modules/run_main.js:74:12)
+    at internal/main/run_main_module.js:18:47
