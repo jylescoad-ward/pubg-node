@@ -1,16 +1,58 @@
 const fs = require('fs');
 
 if (!fs.existsSync("config.json")) {
-	console.error("config.json does not exist, please create it or redownload from github <3"); 
+	console.error("config.json does not exist, please create it or redownload from github <3");
 	process.exit()
 }
 
 const config = require('./config.json');
 const battlegrounds = require('battlegrounds');
+const math = require('mathjs');
 var api = new battlegrounds(config.api_key);
 var argv = process.argv;
 
-start();
+if (config.api_key === "not_set") {
+	setup();
+	process.exit();
+}
+switch (argv[2].split("\r").join("")) {
+	case '-m':
+	case '--export-match-data':
+		match_get()
+		break;
+	case '-mu':
+	case '--latest-match-from-username':
+		match_get_username()
+		break;
+	case '-mhtml':
+	case '--match-export-to-html':
+		match_get_html()
+		break;
+	case '-muhtml':
+	case '--match-export-to-html-from-username':
+		match_get_html_username()
+		break;
+	case '-p':
+	case '--get-player-info':
+		user(argv[3])
+		break;
+	case '-c':
+	case '--cleanup':
+		cleanup()
+		break;
+	case '-s':
+	case '--setup':
+		setup()
+		break;
+	case '-h':
+	case '--help':
+		help();
+		break;
+	default:
+		console.log("No Valid Arguments Recognised, Try './tool --help' or 'node js --help'");
+		process.exit();
+		break;
+}
 
 async function match(id_given) {
   try {
@@ -266,52 +308,6 @@ async function writeFile(location, content){
 		setTimeout(function () { console.log('\nwritten to ' + location) }, 2000)
 	});
 	return true;
-}
-function start() {
-	const argv = process.argv;
-	if (config.api_key === "not_set") {
-		setup();
-		process.exit();
-	}
-	switch (argv[2].split("\r").join("")) {
-		case '-m':
-		case '--export-match-data':
-			match_get()
-			break;
-		case '-mu':
-		case '--latest-match-from-username':
-			match_get_username()
-			break;
-		case '-mhtml':
-		case '--match-export-to-html':
-			match_get_html()
-			break;
-		case '-muhtml':
-		case '--match-export-to-html-from-username':
-			match_get_html_username()
-			break;
-		case '-p':
-		case '--get-player-info':
-			user(argv[3])
-			break;
-		case '-c':
-		case '--cleanup':
-			cleanup()
-			break;
-		case '-s':
-		case '--setup':
-			setup()
-			break;
-		case '-h':
-		case '--help':
-			help();
-			break;
-		default:
-			console.log("No Valid Arguments Recognised, Try './tool --help' or 'node js --help'");
-			process.exit();
-			break;
-	}
-	process.exit();
 }
 
 async function setup(){
