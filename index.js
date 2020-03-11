@@ -8,6 +8,7 @@ if (!fs.existsSync("config.json")) {
 const config = require('./config.json');
 const battlegrounds = require('battlegrounds');
 const math = require('mathjs');
+const signale = require('signale');
 var api = new battlegrounds(config.api_key);
 var argv = process.argv;
 
@@ -15,6 +16,7 @@ if (config.api_key === "not_set") {
 	setup();
 	process.exit();
 }
+signale.info("Some Functions might take a bit")
 switch (argv[2].split("\r").join("")) {
 	case '-m':
 	case '--export-match-data':
@@ -55,7 +57,7 @@ switch (argv[2].split("\r").join("")) {
 }
 
 async function match(id_given) {
-  try {
+  	try {
 		let matchid = id_given;
 		const res = await api.getMatch({ id: matchid });
 		var json_array = [];
@@ -196,7 +198,7 @@ async function user(uname_given){
 function match_get() {
 	if (argv.length !== 4) {
 		process.on('exit', function (code) {
-			return console.error("No Username Given or Too many arguments given.\n\nTry;\n./tool -m [PUBG MatchID]");
+			signale.error("No MatchID Given or Too many arguments given.\n\nTry;\n./tool -m [PUBG MatchID]");
 		})
 	} else {
 		require('./export.js').csv(argv[3]);
@@ -205,7 +207,7 @@ function match_get() {
 async function match_get_username() {
 	if (argv.length !== 4) {
 		process.on('exit', function (code) {
-			return console.error("No Username Given or Too many arguments given.\n\nTry;\n./tool -mu [PUBG Username]");
+			signale.error("No Username Given or Too many arguments given.\n\nTry;\n./tool -mu [PUBG Username]");
 		})
 	} else {
 		try{
@@ -229,7 +231,7 @@ function match_get_html() {
 async function match_get_html_username() {
 	if (argv.length !== 4) {
 		process.on('exit', function (code) {
-			return console.error("No Username Given or Too many arguments given.\n\nTry;\n./tool -muhtml [PUBG Username]");
+			signale.error("No Username Given or Too many arguments given.\n\nTry;\n./tool -muhtml [PUBG Username]");
 		});
 	} else {
 		try {
@@ -243,14 +245,14 @@ async function match_get_html_username() {
 }
 
 async function back_export_csv(matchID){
-  console.log("## WARNING ##\nThis will spit all data that will be written to a .csv file in this directory\n--consent does not exist here--");
+  signale.warn("This will spit all data that will be written to a .csv file in this directory");
   match(matchID).then(function (result_) {
     let outfile = "pubg_match_" + matchID + ".csv"
     writeFile(outfile, result_)
   })
 }
 async function back_export_html(matchID) {
-		console.log("## WARNING ##\nThis will spit all data that will be written to a .html file in this directory\n--consent does not exist here--");
+		signale.warn("This will spit all data that will be written to a .html file in this directory");
     try {
       match(matchID).then(function (result) {
         let final = result;
@@ -305,7 +307,7 @@ async function writeFile(location, content){
 
 	fs.appendFile(location, content, function (err) {
 		if (err) throw err;
-		setTimeout(function () { console.log('\nwritten to ' + location) }, 2000)
+		setTimeout(function () { console.log();signale.success('written to ' + location) }, 2000)
 	});
 	return true;
 }
@@ -351,13 +353,12 @@ function cleanup(){
 		output: process.stdout
 	});
 
-	console.log("## WARNING ##")
-	console.log("This function will delete ALL match data in this directory")
-	rl.question("Are You sure? [y/N] ", async function (option) {
+	signale.warn("This function will delete ALL match data in this directory")
+	rl.question(signale.wait("Are You sure? [y/N] "), async function (option) {
 		switch (option) {
 			case 'y':
 			case 'Y':
-				console.log("Deleting ALL match data...");
+				signale.await("Deleting ALL match data...");
 
 				let script = 'rm -v pubg_match_*';
 
