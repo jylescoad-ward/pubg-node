@@ -194,8 +194,8 @@ async function user(uname_given){
 			"matches": JSON.stringify(res[0].matches)
 		};
 	} catch (err) {
-		console.log('error:')
-		console.error(err.errors[0].title + err.errors[0].detail)
+		signale.error(err.errors[0].title + err.errors[0].detail)
+		process.exit()
 		final = false;
 	}
 	return final;
