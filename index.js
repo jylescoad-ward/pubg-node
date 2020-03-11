@@ -12,9 +12,10 @@ const signale = require('signale');
 var api = new battlegrounds(config.api_key);
 var argv = process.argv;
 
-if (config.api_key === "not_set") {
-	setup();
-	process.exit();
+switch (config.api_key) {
+	case 'not_set':
+		setup();
+		process.exit();
 }
 switch (argv[2].split("\r").join("")) {
 	case '-m':
