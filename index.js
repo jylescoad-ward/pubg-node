@@ -16,27 +16,32 @@ if (config.api_key === "not_set") {
 	setup();
 	process.exit();
 }
-signale.info("Some Functions might take a bit")
 switch (argv[2].split("\r").join("")) {
 	case '-m':
 	case '--export-match-data':
+		signale.info('This might take a bit...');
 		match_get()
 		break;
 	case '-mu':
 	case '--latest-match-from-username':
+		signale.info('This might take a bit...');
 		match_get_username()
 		break;
 	case '-mhtml':
 	case '--match-export-to-html':
+		signale.info('This might take a bit...');
 		match_get_html()
 		break;
 	case '-muhtml':
 	case '--match-export-to-html-from-username':
+		signale.info('This might take a bit...');
 		match_get_html_username()
 		break;
 	case '-p':
 	case '--get-player-info':
-		user(argv[3])
+		user(argv[3]).then(function(result) {
+			console.log(result)
+		})
 		break;
 	case '-c':
 	case '--cleanup':
@@ -56,6 +61,7 @@ switch (argv[2].split("\r").join("")) {
 		break;
 }
 
+//Vital Functions to make the thing work
 async function match(id_given) {
   	try {
 		let matchid = id_given;
@@ -195,6 +201,7 @@ async function user(uname_given){
 	return final;
 }
 
+//Command Related Functions, Heaps cool tbh
 function match_get() {
 	if (argv.length !== 4) {
 		process.on('exit', function (code) {
@@ -244,6 +251,7 @@ async function match_get_html_username() {
 	}
 }
 
+//Vital Functions to make the thing work
 async function back_export_csv(matchID){
   signale.warn("This will spit all data that will be written to a .csv file in this directory");
   match(matchID).then(function (result_) {
@@ -291,7 +299,6 @@ async function back_export_html(matchID) {
       })
     } catch (err){ console.error(err) }
 }
-
 async function writeFile(location, content){
 	if (fs.existsSync(location)) {
 		fs.unlink(location, (err) => {
