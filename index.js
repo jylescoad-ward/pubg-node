@@ -368,13 +368,32 @@ function cleanup(){
 			case 'Y':
 				signale.await("Deleting ALL match data...");
 
-				let script = 'rm -v pubg_match_*';
+				let script_rm = 'rm -v pubg_match_*';
+				let script_check = 'ls -1q pubg_match*';
 
 				const util = require('util');
 				const exec = util.promisify(require('child_process').exec);
-				const { stdout, stderr } = await exec(script);
 
-				rl.close();
+				try {
+					const { stdout_check, stderr_check } = await exec(script_check);
+				} catch (err) {
+					if(err.stderr.includes('ls: pubg_match*: No such file or directory')) {
+						signale.error("No Match Files Found.");
+						rl.close();
+						process.exit();
+					}
+					signale.error("Error;");
+					console.log(err.stderr);
+					rl.close();
+					process.exit();
+				}
+
+
+				const { stdout_rm, stderr_rm } = await exec(script_rm).then(function() {
+					signale.success("Cleanup Successful");
+					rl.close();
+					process.exit();
+				});
 				break;
 			default:
 			case 'n':
