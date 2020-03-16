@@ -1,8 +1,6 @@
 # pubg-node
 A PUBG Match Info Thing for Tournaments (made to make my life easy @ [RFLan](https://rflan.org))
 
-# CODE IS CURRENTLY BROKEN, DO NOT CLONE UNLESS CONTRIBUTING
-
 ## [all you need is node.js](https://nodejs.org/en/download/)
 
 ### install thing.
